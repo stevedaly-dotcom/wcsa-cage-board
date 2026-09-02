@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="refresh" content="300">
+<title>Elite Baseball — Cage Schedule</title>
+<style>
+html,body{margin:0;background:#111;overflow:hidden}
+#cage-board{position:fixed;left:0;top:0;transform-origin:0 0;width:1920px;height:1080px;background:#111;font-family:Arial,Helvetica,sans-serif;color:#f2f2f2;overflow:hidden;--red:#d7202a}
+#cage-board *{box-sizing:border-box;margin:0;padding:0}
+#cage-board .bar{position:absolute;top:0;height:22px;background:var(--red)}
+#cage-board .bar.l{left:0;width:560px;clip-path:polygon(0 0,100% 0,calc(100% - 40px) 100%,0 100%)}
+#cage-board .bar.r{right:0;width:560px;clip-path:polygon(40px 0,100% 0,100% 100%,0 100%)}
+#cage-board .bar.bl{top:auto;bottom:0;left:0;width:560px;height:18px;clip-path:polygon(0 0,calc(100% - 40px) 0,100% 100%,0 100%)}
+#cage-board .bar.br{top:auto;bottom:0;right:0;width:560px;height:18px;clip-path:polygon(0 0,100% 0,100% 100%,40px 100%)}
+#cage-board header{position:absolute;top:42px;left:0;right:0;height:210px;display:flex;align-items:center;justify-content:space-between;padding:0 90px}
+#cage-board header .logo{background:#fff;border-radius:14px;padding:14px 26px;line-height:0}
+#cage-board header .logo img{height:150px}
+#cage-board .hd{text-align:right}
+#cage-board .hd .kicker{font-size:56px;font-weight:700;letter-spacing:.38em;text-transform:uppercase;line-height:1;color:#fff}
+#cage-board .hd .kicker b{color:var(--red);font-weight:700}
+#cage-board .hd .date{margin-top:24px;font-size:40px;font-weight:700;color:#ccc}
+#cage-board .hd .stamp{font-size:28px;color:#888;margin-top:8px;font-weight:700}
+#cage-board .rule{position:absolute;top:280px;left:90px;right:90px;height:5px;background:linear-gradient(90deg,transparent,var(--red) 10%,var(--red) 90%,transparent)}
+#cage-board table{position:absolute;top:308px;left:90px;right:90px;width:1740px;border-collapse:collapse;table-layout:fixed;visibility:__TABLE_VIS__}
+#cage-board th{font-size:24px;letter-spacing:.28em;text-transform:uppercase;color:#999;text-align:left;padding:0 18px 12px;font-weight:700}
+#cage-board td{padding:0 18px;height:78px;font-size:34px;font-weight:700;border-top:2px solid #2c2c2c;vertical-align:middle;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#f2f2f2}
+#cage-board tr.now td{background:#241416}
+#cage-board td.time{color:var(--red);font-size:30px;width:310px}
+#cage-board td.time small{display:block;color:#999;font-size:20px;letter-spacing:.2em;font-weight:700}
+#cage-board td.space{width:430px;color:#fff}
+#cage-board td.coach{color:#bbb;font-weight:400;font-size:28px;width:360px;white-space:normal;line-height:1.15}
+#cage-board .pg{position:absolute;top:872px;left:90px;font-size:24px;color:#777;letter-spacing:.2em;text-transform:uppercase;font-weight:700}
+#cage-board .empty{position:absolute;top:520px;left:0;right:0;text-align:center;font-size:56px;font-weight:700;color:#777;letter-spacing:.1em}
+#cage-board .keyline{position:absolute;bottom:138px;left:0;right:0;height:6px;background:var(--red)}
+#cage-board footer{position:absolute;left:0;right:0;bottom:18px;height:120px;background:#000;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 90px;font-size:38px}
+#cage-board footer u{text-decoration:none;border-bottom:5px solid var(--red);padding-bottom:2px;font-weight:700}
+#cage-board footer img{height:80px;background:#fff;border-radius:8px;padding:5px}
+</style>
+</head>
+<body>
+<div id="cage-board">
+  <div class="bar l"></div><div class="bar r"></div>
+  <header>
+    <div class="logo"><img src="__ELITE_LOGO__" alt="Elite Baseball Training"></div>
+    <div class="hd">
+      <div class="kicker">Today <b>in the</b> cages</div>
+      <div class="date">__DATE__</div>
+      <div class="stamp">Updated __STAMP__</div>
+    </div>
+  </header>
+  <div class="rule"></div>
+  <table><thead><tr><th>Time</th><th>Player</th><th>Space</th><th>Coach</th></tr></thead><tbody>
+__ROWS__
+  </tbody></table>
+  <div class="empty"__EMPTY_HIDDEN__>No lessons scheduled today</div>
+  <div class="pg" id="pg" hidden></div>
+  <div class="keyline"></div>
+  <footer>
+    <div>Check in at the <u>front desk</u> &nbsp;·&nbsp; cages are in the <u>back</u></div>
+    <img src="__WCSA_LOGO__" alt="Windy City Sports Academy">
+  </footer>
+  <div class="bar bl"></div><div class="bar br"></div>
+</div>
+<script>
+(function(){function fit(){var s=Math.min(window.innerWidth/1920,window.innerHeight/1080);var b=document.getElementById('cage-board');b.style.transform='scale('+s+')';b.style.left=((window.innerWidth-1920*s)/2)+'px';b.style.top=((window.innerHeight-1080*s)/2)+'px';}fit();window.addEventListener('resize',fit);
+var ROWS=6, SECS=10;
+var all=[].slice.call(document.querySelectorAll('tbody tr'));
+if(all.length>ROWS){
+  var pages=Math.ceil(all.length/ROWS), i=0, pg=document.getElementById('pg');
+  pg.hidden=false;
+  function show(){all.forEach(function(r,k){r.style.display=(k>=i*ROWS&&k<(i+1)*ROWS)?'':'none'});pg.textContent='Page '+(i+1)+' of '+pages;i=(i+1)%pages;}
+  show(); setInterval(show,SECS*1000);
+}})();
+</script>
+</body>
+</html>
